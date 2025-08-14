@@ -10,4 +10,8 @@ class GithubActionsApplicationTests {
   void contextLoads() {
   }
 
+  @Test
+  void secondContextLoads() {
+  }
+
 }
