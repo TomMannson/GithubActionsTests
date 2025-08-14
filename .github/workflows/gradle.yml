@@ -5,6 +5,11 @@ on:
     branches: [ "master" ]
   pull_request:
     branches: [ "master" ]
+  workflow_dispatch:
+    inputs:
+      version:
+        description: "Nowa wersja (format: Major.Minor.Patch, np. 1.0.0)"
+        required: true
 
 jobs:
   build:
