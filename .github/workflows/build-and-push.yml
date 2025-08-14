@@ -42,10 +42,26 @@ jobs:
           ./gradlew build -x test
           echo "✅ Project built successfully!"
 
+      - name: Debug secrets
+        run: |
+          echo "Checking if secrets are available..."
+          if [ -n "${{ secrets.DOCKERHUB_USERNAME }}" ]; then
+            echo "✅ DOCKERHUB_USERNAME is set (length: ${#DOCKERHUB_USERNAME})"
+          else
+            echo "❌ DOCKERHUB_USERNAME is NOT set"
+          fi
+          if [ -n "${{ secrets.DOCKERHUB_TOKEN }}" ]; then
+            echo "✅ DOCKERHUB_TOKEN is set (length: ${#DOCKERHUB_TOKEN})"
+          else
+            echo "❌ DOCKERHUB_TOKEN is NOT set"
+          fi
+
       - name: Log in to Docker Hub
         uses: docker/login-action@v3
+        env:
+          DOCKER_USERNAME: ${{ secrets.DOCKERHUB_USERNAME }}
+          DOCKER_PASSWORD: ${{ secrets.DOCKERHUB_TOKEN }}
         with:
-          registry: ${{ env.REGISTRY }}
           username: ${{ secrets.DOCKERHUB_USERNAME }}
           password: ${{ secrets.DOCKERHUB_TOKEN }}
 
