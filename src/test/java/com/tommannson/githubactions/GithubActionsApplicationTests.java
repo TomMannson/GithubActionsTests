@@ -12,7 +12,7 @@ class GithubActionsApplicationTests {
 
   @Test
   void failedContextLoads() {
-    throw new RuntimeException("TEST")
+    throw new RuntimeException("TEST");
   }
 
 }
