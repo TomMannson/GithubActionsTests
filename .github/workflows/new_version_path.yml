@@ -3,6 +3,9 @@ name: New Version Patch
 on:
   workflow_dispatch:
 
+permissions:
+  contents: write
+
 jobs:
   # Job for Patch version increment
   New_Version_Patch:

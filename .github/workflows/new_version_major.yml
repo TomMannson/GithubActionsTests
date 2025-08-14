@@ -3,6 +3,9 @@ name: New Version Major
 on:
   workflow_dispatch:
 
+permissions:
+  contents: write
+
 jobs:
   # Job for Major version increment
   New_Version_Major:

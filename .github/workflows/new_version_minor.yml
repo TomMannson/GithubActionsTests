@@ -3,6 +3,9 @@ name: New Version Minor
 on:
   workflow_dispatch:
 
+permissions:
+  contents: write
+
 jobs:
   # Job for Minor version increment
   New_Version_Minor:
