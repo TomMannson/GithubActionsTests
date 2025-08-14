@@ -13,7 +13,7 @@ on:
 
 jobs:
   build:
-
+    if: github.event_name != 'workflow_dispatch'
     runs-on: ubuntu-latest
     permissions:
       contents: read
@@ -53,7 +53,7 @@ jobs:
       run: ./gradlew build
 
   dependency-submission:
-
+    if: github.event_name != 'workflow_dispatch'
     runs-on: ubuntu-latest
     permissions:
       contents: write
