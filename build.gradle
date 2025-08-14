@@ -2,6 +2,7 @@ plugins {
     id 'java'
     id 'org.springframework.boot' version '3.5.4'
     id 'io.spring.dependency-management' version '1.1.7'
+    id 'com.google.cloud.tools.jib' version '3.4.1'
 }
 
 group = 'com.tommannson'
@@ -25,4 +26,45 @@ dependencies {
 
 tasks.named('test') {
     useJUnitPlatform()
+}
+
+// JIB configuration for multi-platform builds
+jib {
+    from {
+        image = 'eclipse-temurin:21-jre-alpine'
+        platforms {
+            platform {
+                architecture = 'amd64'
+                os = 'linux'
+            }
+            platform {
+                architecture = 'arm64'
+                os = 'linux'
+            }
+            platform {
+                architecture = 'amd64'
+                os = 'darwin'
+            }
+            platform {
+                architecture = 'arm64'
+                os = 'darwin'
+            }
+        }
+    }
+    to {
+        image = 'tommannson/github-actions-app'
+        tags = [version, 'latest']
+    }
+    container {
+        ports = ['8080']
+        environment = [
+            'SPRING_PROFILES_ACTIVE': 'prod'
+        ]
+        labels = [
+            'org.opencontainers.image.title': 'GitHub Actions Spring Boot App',
+            'org.opencontainers.image.description': 'Spring Boot application built with GitHub Actions',
+            'org.opencontainers.image.version': version,
+            'org.opencontainers.image.created': new Date().toInstant().toString()
+        ]
+    }
 }
