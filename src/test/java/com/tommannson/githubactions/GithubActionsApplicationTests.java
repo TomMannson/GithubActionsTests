@@ -10,9 +10,4 @@ class GithubActionsApplicationTests {
   void contextLoads() {
   }
 
-  @Test
-  void failedContextLoads() {
-    throw new RuntimeException("TEST");
-  }
-
 }
