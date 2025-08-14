@@ -1,0 +1,111 @@
+name: Version Bump
+
+on:
+  workflow_call:
+    inputs:
+      version-type:
+        description: "Type of version increment (major, minor, patch)"
+        required: true
+        type: string
+        default: "patch"
+    outputs:
+      new-version:
+        description: "The new version that was set"
+        value: ${{ jobs.version-bump.outputs.new-version }}
+
+jobs:
+  version-bump:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+    outputs:
+      new-version: ${{ steps.version-calc.outputs.new-version }}
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+        with:
+          token: ${{ secrets.GITHUB_TOKEN }}
+          fetch-depth: 0
+
+      - name: Set up JDK 17
+        uses: actions/setup-java@v4
+        with:
+          java-version: "17"
+          distribution: "temurin"
+
+      - name: Read current version and calculate new version
+        id: version-calc
+        run: |
+          CURRENT_VERSION=$(grep "version = " build.gradle | sed "s/.*version = '\(.*\)'.*/\1/")
+          IFS='.' read -r MAJOR MINOR PATCH <<< "$CURRENT_VERSION"
+
+          VERSION_TYPE="${{ inputs.version-type }}"
+          case $VERSION_TYPE in
+            "major")
+              NEW_MAJOR=$((MAJOR + 1))
+              NEW_VERSION="$NEW_MAJOR.0.0"
+              ;;
+            "minor")
+              NEW_MINOR=$((MINOR + 1))
+              NEW_VERSION="$MAJOR.$NEW_MINOR.0"
+              ;;
+            "patch")
+              NEW_PATCH=$((PATCH + 1))
+              NEW_VERSION="$MAJOR.$MINOR.$NEW_PATCH"
+              ;;
+            *)
+              echo "❌ Nieznany typ wersji: $VERSION_TYPE"
+              exit 1
+              ;;
+          esac
+
+          echo "new-version=$NEW_VERSION" >> $GITHUB_OUTPUT
+          echo "Current version: $CURRENT_VERSION"
+          echo "Version type: $VERSION_TYPE"
+          echo "New version: $NEW_VERSION"
+
+      - name: Update version in build.gradle
+        run: |
+          VERSION="${{ steps.version-calc.outputs.new-version }}"
+          sed -i "s/version = '.*'/version = '$VERSION'/" build.gradle
+          echo "Zaktualizowano wersję w build.gradle na: $VERSION"
+
+      - name: Verify version update
+        run: |
+          VERSION="${{ steps.version-calc.outputs.new-version }}"
+          if grep -q "version = '$VERSION'" build.gradle; then
+            echo "✅ Wersja została poprawnie zaktualizowana w build.gradle"
+          else
+            echo "❌ Błąd podczas aktualizacji wersji w build.gradle"
+            exit 1
+          fi
+
+      - name: Configure Git
+        run: |
+          git config --local user.email "action@github.com"
+          git config --local user.name "GitHub Action"
+
+      - name: Commit and push changes
+        run: |
+          VERSION="${{ steps.version-calc.outputs.new-version }}"
+          VERSION_TYPE="${{ inputs.version-type }}"
+          git add build.gradle
+          git commit -m "Bump $VERSION_TYPE version to $VERSION"
+          git push origin master
+
+      - name: Create and push tag
+        run: |
+          VERSION="${{ steps.version-calc.outputs.new-version }}"
+          VERSION_TYPE="${{ inputs.version-type }}"
+          git tag -a "v$VERSION" -m "Release $VERSION_TYPE version $VERSION"
+          git push origin "v$VERSION"
+          echo "✅ Utworzono tag v$VERSION"
+
+      - name: Summary
+        run: |
+          VERSION="${{ steps.version-calc.outputs.new-version }}"
+          VERSION_TYPE="${{ inputs.version-type }}"
+          echo "🎉 $VERSION_TYPE Release $VERSION został pomyślnie utworzony!"
+          echo "📝 Plik build.gradle został zaktualizowany"
+          echo "🔖 Tag v$VERSION został utworzony i wypchnięty"
+          echo "🚀 Zmiany zostały wypchnięte do gałęzi master"

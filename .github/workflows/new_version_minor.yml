@@ -1,0 +1,11 @@
+name: New Version Minor
+
+on:
+  workflow_dispatch:
+
+jobs:
+  # Job for Minor version increment
+  New_Version_Minor:
+    uses: ./.github/workflows/version-bump.yml
+    with:
+      version-type: minor

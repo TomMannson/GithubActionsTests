@@ -1,0 +1,11 @@
+name: New Version Major
+
+on:
+  workflow_dispatch:
+
+jobs:
+  # Job for Major version increment
+  New_Version_Major:
+    uses: ./.github/workflows/version-bump.yml
+    with:
+      version-type: major
