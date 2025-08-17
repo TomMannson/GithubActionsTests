@@ -10,10 +10,11 @@ resources:
   - ghaction/sealedsecret.yaml
 
 # Common labels to apply to all resources
-commonLabels:
-  app: github-actions-app
-  version: v1.0.0
-  environment: production
+labels:
+  - pairs:
+      app: github-actions-app
+      version: v1.0.0
+      environment: production
 
 # Common annotations
 commonAnnotations:
