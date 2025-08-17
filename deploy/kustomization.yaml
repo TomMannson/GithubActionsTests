@@ -6,7 +6,7 @@ metadata:
 
 # Resources to include
 resources:
-  - github-actions-app.yaml
+  - ghaction/github-actions-app.yaml
 
 # Common labels to apply to all resources
 commonLabels:
@@ -54,7 +54,7 @@ images:
 
 # Configurations for Kustomize transformers
 configurations:
-  - kustomizeconfig.yaml
+  - ghaction/kustomizeconfig.yaml
 # Build options
 # Note: buildOptions is not supported in all Kustomize versions
 # Use kustomize build --load-restrictor LoadRestrictionsNone if needed
