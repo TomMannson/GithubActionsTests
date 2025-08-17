@@ -7,6 +7,7 @@ metadata:
 # Resources to include
 resources:
   - ghaction/github-actions-app.yaml
+  - ghaction/sealedsecret.yaml
 
 # Common labels to apply to all resources
 commonLabels:
