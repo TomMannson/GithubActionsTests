@@ -40,7 +40,7 @@ namespace: default
 # Image configuration
 images:
   - name: tommannson/github-actions-app
-    newTag: 0.2.1
+    newTag: 0.2.2
     # You can also specify a new name if needed:
     # newName: your-registry/github-actions-app
 
