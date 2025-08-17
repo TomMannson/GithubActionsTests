@@ -1,0 +1,60 @@
+apiVersion: kustomize.config.k8s.io/v1beta1
+kind: Kustomization
+
+metadata:
+  name: github-actions-app
+
+# Resources to include
+resources:
+  - github-actions-app.yaml
+
+# Common labels to apply to all resources
+commonLabels:
+  app: github-actions-app
+  version: v1.0.0
+  environment: production
+
+# Common annotations
+commonAnnotations:
+  description: "GitHub Actions App deployed via Kustomize"
+  maintainer: "devops-team"
+  fluxcd.io/automated: "true"
+  fluxcd.io/tag.github-actions-app: semver:~0.2
+
+# Namespace configuration
+namespace: default
+
+# ConfigMap and Secret generators (if needed)
+# configMapGenerator:
+#   - name: app-config
+#     literals:
+#       - LOG_LEVEL=INFO
+
+# secretGenerator:
+#   - name: app-secrets
+#     literals:
+#       - API_KEY=your-api-key-here
+
+# Image configuration
+images:
+  - name: tommannson/github-actions-app
+    newTag: 0.2.0
+    # You can also specify a new name if needed:
+    # newName: your-registry/github-actions-app
+
+# Patches for customization (uncomment and modify as needed)
+# patches:
+#   - target:
+#       kind: Deployment
+#       name: github-actions-app-deployment
+#     patch: |-
+#       - op: replace
+#         path: /spec/replicas
+#         value: 2
+
+# Configurations for Kustomize transformers
+configurations:
+  - kustomizeconfig.yaml
+# Build options
+# Note: buildOptions is not supported in all Kustomize versions
+# Use kustomize build --load-restrictor LoadRestrictionsNone if needed
