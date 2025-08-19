@@ -21,7 +21,7 @@ commonAnnotations:
   description: "GitHub Actions App deployed via Kustomize"
   maintainer: "devops-team"
   fluxcd.io/automated: "true"
-  fluxcd.io/tag.github-actions-app: semver:~0.2
+  fluxcd.io/tag.github-actions-app: semver:*
 
 # Namespace configuration
 namespace: default
@@ -40,7 +40,7 @@ namespace: default
 # Image configuration
 images:
   - name: tommannson/github-actions-app
-    newTag: 0.2.2
+    newTag: 0.3.0
     # You can also specify a new name if needed:
     # newName: your-registry/github-actions-app
 
