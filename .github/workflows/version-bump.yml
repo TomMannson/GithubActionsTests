@@ -15,6 +15,7 @@ on:
 
 jobs:
   version-bump:
+    environment: Dev
     runs-on: ubuntu-latest
     permissions:
       contents: write
@@ -24,7 +25,7 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v4
         with:
-          token: ${{ secrets.PAT_TOKEN }}
+          token: ${{ secrets.ACCESS_TOKEN }}
           fetch-depth: 0
 
       - name: Set up JDK 17
