@@ -12,3 +12,5 @@ jobs:
     uses: ./.github/workflows/version-bump.yml
     with:
       version-type: minor
+    secrets:
+      ACCESS_TOKEN: ${{ secrets.MY_PAT }}
