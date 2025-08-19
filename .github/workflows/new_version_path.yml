@@ -12,3 +12,6 @@ jobs:
     uses: ./.github/workflows/version-bump.yml
     with:
       version-type: patch
+      environment: Dev
+    secrets:
+      ACCESS_TOKEN: ${{ secrets.ACCESS_TOKEN }}

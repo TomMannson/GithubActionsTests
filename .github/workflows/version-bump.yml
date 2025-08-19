@@ -8,6 +8,10 @@ on:
         required: true
         type: string
         default: "patch"
+    secrets:
+      ACCESS_TOKEN:
+        description: "PAT lub GITHUB_TOKEN z uprawnieniami do push"
+        required: true
     outputs:
       new-version:
         description: "The new version that was set"
