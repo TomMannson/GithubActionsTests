@@ -94,11 +94,13 @@ jobs:
           git push origin master
 
       - name: Create and push tag
+        env:
+          GITHUB_TOKEN: ${{ secrets.PAT_TOKEN }}
         run: |
           VERSION="${{ steps.version-calc.outputs.new-version }}"
           VERSION_TYPE="${{ inputs.version-type }}"
           git tag -a "v$VERSION" -m "Release $VERSION_TYPE version $VERSION"
-          git push origin "v$VERSION"
+          git push https://${GITHUB_TOKEN}@github.com/${GITHUB_REPOSITORY}.git "v$VERSION"
           echo "✅ Utworzono tag v$VERSION"
 
       - name: Summary
