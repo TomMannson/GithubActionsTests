@@ -24,7 +24,7 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v4
         with:
-          token: ${{ secrets.GITHUB_TOKEN }}
+          token: ${{ secrets.PAT_TOKEN }}
           fetch-depth: 0
 
       - name: Set up JDK 17
@@ -94,13 +94,11 @@ jobs:
           git push origin master
 
       - name: Create and push tag
-        env:
-          GITHUB_TOKEN: ${{ secrets.PAT_TOKEN }}
         run: |
           VERSION="${{ steps.version-calc.outputs.new-version }}"
           VERSION_TYPE="${{ inputs.version-type }}"
           git tag -a "v$VERSION" -m "Release $VERSION_TYPE version $VERSION"
-          git push https://${GITHUB_TOKEN}@github.com/${GITHUB_REPOSITORY}.git "v$VERSION"
+          git push origin "v$VERSION"
           echo "✅ Utworzono tag v$VERSION"
 
       - name: Summary
