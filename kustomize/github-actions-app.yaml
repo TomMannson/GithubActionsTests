@@ -71,7 +71,7 @@ spec:
     # WAŻNE: Zmień 'app.local' na adres IP swojego węzła k3s
     # lub na domenę, która na niego wskazuje.
     # Przykład dla IP 192.168.1.100: host: "app.192.168.1.100.nip.io"
-    - host: ec2-35-159-122-68.eu-central-1.compute.amazonaws.com
+    - host: legacybuster.com
       http:
         paths:
           - path: /api/test # Ścieżka dostępu z zewnątrz
