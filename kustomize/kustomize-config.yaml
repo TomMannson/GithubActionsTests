@@ -1,0 +1,14 @@
+# kustomizeconfig.yaml
+# Configuration for Kustomize transformers and validators
+
+nameReference:
+  - kind: Service
+    version: v1
+    fieldSpecs:
+      - kind: Ingress
+        path: spec/rules/backend/service/name
+        create: false
+
+varReference:
+  - path: spec/rules/host
+    kind: Ingress

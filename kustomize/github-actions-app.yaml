@@ -1,0 +1,83 @@
+# github-actions-app.yaml
+
+# 1. Deployment: Uruchamia i zarządza podem z Twoim obrazem Docker.
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: github-actions-app-deployment
+  labels:
+    app: github-actions-app
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: github-actions-app
+      version: v1.0.0
+      environment: production
+  template:
+    metadata:
+      labels:
+        app: github-actions-app
+        version: v1.0.0
+        environment: production
+    spec:
+      containers:
+        - name: github-actions-app-container
+          image: tommannson/github-actions-app
+          env:
+            - name: DB_USER
+              valueFrom:
+                secretKeyRef:
+                  name: db-credentials
+                  key: USER
+
+          ports:
+            - containerPort: 8080 # Port, na którym nasłuchuje aplikacja
+          # Dobrą praktyką jest określenie zasobów dla kontenera
+          resources:
+            requests:
+              memory: "64Mi"
+              cpu: "100m"
+            limits:
+              memory: "128Mi"
+              cpu: "250m"
+---
+# 2. Service: Tworzy wewnętrzny, stabilny adres sieciowy (ClusterIP) dla aplikacji.
+# Ingress będzie kierował ruch do tego serwisu.
+apiVersion: v1
+kind: Service
+metadata:
+  name: github-actions-app-service
+spec:
+  selector:
+    app: github-actions-app # Kieruje ruch do podów z tą etykietą
+    version: v1.0.0
+    environment: production
+  ports:
+    - protocol: TCP
+      port: 80 # Port, na którym Service jest dostępny w klastrze
+      targetPort: 8080 # Port w kontenerze, do którego kierowany jest ruch
+  type: ClusterIP
+---
+# 3. Ingress: Umożliwia dostęp do aplikacji z zewnątrz klastra.
+# Wykorzystuje domyślny Ingress Controller w k3s (Traefik).
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: github-actions-app-ingress
+spec:
+  ingressClassName: traefik
+  rules:
+    # WAŻNE: Zmień 'app.local' na adres IP swojego węzła k3s
+    # lub na domenę, która na niego wskazuje.
+    # Przykład dla IP 192.168.1.100: host: "app.192.168.1.100.nip.io"
+    - host: ec2-35-159-122-68.eu-central-1.compute.amazonaws.com
+      http:
+        paths:
+          - path: /api/test # Ścieżka dostępu z zewnątrz
+            pathType: Prefix
+            backend:
+              service:
+                name: github-actions-app-service # Nazwa serwisu docelowego
+                port:
+                  number: 80 # Port serwisu docelowego

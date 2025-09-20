@@ -1,0 +1,29 @@
+apiVersion: kustomize.config.k8s.io/v1beta1
+kind: Kustomization
+metadata:
+  name: github-actions-app
+
+resources:
+  - github-actions-app.yaml
+  - sealed-secret.yaml
+
+labels:
+  - pairs:
+      app: github-actions-app
+      version: v1.0.0
+      environment: production
+
+commonAnnotations:
+  description: "GitHub Actions App deployed via Kustomize"
+  maintainer: "Tommannson"
+  fluxcd.io/automated: "true"
+  fluxcd.io/tag.github-actions-app: semver:~0.2
+
+namespace: default
+
+images:
+  - name: tommannson/github-actions-app
+    newTag: 0.2.2
+
+configurations:
+  - kustomize-config.yaml
